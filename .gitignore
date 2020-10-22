@@ -23,5 +23,6 @@
 # or VueJS, otherwise SASS/BEM could be used plus processors to deal with
 # browsers exceptions, and etc.
 
+.DS_Store
 .env
 bin
