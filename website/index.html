@@ -1,0 +1,280 @@
+<!--
+Copyright © 2020 Fernando Silva <audacius@pm.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebSocket demo</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div id="login" class="login">
+        <img class="icon" src="login.svg" alt="login" />
+
+        <h1 class="title">Log In</h1>
+
+        <div class="field username-container">
+          <input
+            class="username"
+            name="username"
+            type="text"
+            placeholder="Username"
+          />
+          <div class="line"></div>
+        </div>
+
+        <p id="output" class="echo"></p>
+
+        <div class="field hide message-container">
+          <input
+            class="message"
+            name="message"
+            type="text"
+            placeholder="Write your message (3 char min); press enter to send!"
+          />
+          <div class="line"></div>
+        </div>
+
+        <div class="field password-container">
+          <input
+            class="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+          />
+          <div class="line"></div>
+        </div>
+
+        <br /><br />
+
+        <div class="btn-group">
+          <input
+            id="btnLogin"
+            class="btn"
+            type="submit"
+            value="Login"
+            onclick="login();"
+          />
+          <input
+            id="btnLogout"
+            class="btn hide"
+            type="submit"
+            value="Logout"
+            onclick="logout();"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /*
+       * Check if localStore is available
+       */
+      const isLocalStorageAvailable = () => {
+        if (typeof Storage === "undefined")
+          alert("This demo requires localStorage");
+      };
+
+      /**
+       * Allows the "enter" key to elements triggering the click action of a button
+       *
+       * @param {Object} el source element
+       * @param {Object} targetClick target clickable element
+       */
+      const registerMessageListener = (el, targetClick) => {
+        // Releases a key on the keyboard
+        el.addEventListener("keyup", (event) => {
+          // "Enter" key on the keyboard
+          if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+
+            // Trigger the button element
+            targetClick.click();
+          }
+        });
+      };
+
+      /**
+       * In a real scenario where it's a web application, deployed in production
+       * completly detached from the API, `serverURI` should be something like
+       * this: wss://api.X.com/ws
+       *
+       * Note the protocol "WSS": WebSocket over an encrypted TLS connection!
+       */
+      const connectToServer = () => {
+        // The following line of code would work properly replacing both `http`
+        // and `https` to `ws` and `wss`
+        const serverURI = window.location.href.replace("http", "ws") + "ws";
+
+        ws = new WebSocket(serverURI);
+
+        ws.onopen = function () {
+          console.log("Connected to server");
+        };
+
+        ws.onmessage = function (event) {
+          const out = document.getElementById("output");
+          out.innerHTML += event.data + "<br>";
+        };
+      };
+
+      /**
+       * Call the API to do login
+       */
+      const login = async () => {
+        const elUser = document.getElementsByClassName("username")[0].value;
+        const elPwd = document.getElementsByClassName("password")[0].value;
+
+        // For demo purpose only: Very rudimentar validation
+        if (elUser.length < 3 || elPwd.length < 3)
+          return alert("Invalid credentials");
+
+        try {
+          const res = await fetch("/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: elUser,
+              // For demo purpose only: it should be sent as base64
+              password: elPwd,
+            }),
+          });
+
+          // For demo purpose only: Very rudimentar handling
+          if (res.status !== 200) return alert("Wrong credentials");
+
+          const data = await res.json();
+          // For demo purpose only: Not the safest/best place to store
+          localStorage.setItem("token", data.token);
+
+          // Update view
+          renderMessager();
+          document.getElementById("btnLogout").classList.remove("hide");
+        } catch (e) {
+          console.log("Failed to login");
+        }
+      };
+
+      /**
+       * Logout by deleting token
+       */
+      const logout = () => {
+        localStorage.removeItem("token");
+        location.reload();
+      };
+
+      /**
+       * Send the message, from the `message` input, to the server via websockets
+       *
+       * Note: In a real scenario where it's a web application, deployed in
+       * production, data would be sanitized, and validated before push to the
+       * server, and in the server side too
+       */
+      const sendMessage = () => {
+        const elMsg = document.getElementsByClassName("message")[0];
+
+        // For demo purpose only: Very rudimentar validation
+        if (elMsg.value.length < 3) return alert("Invalid message");
+
+        ws.send(elMsg.value);
+        elMsg.value = "";
+      };
+
+      /**
+       * In a real scenario where it's a web application, deployed in production,
+       * using ReactJS and React Router, it would render another page, not mutate
+       * elements..
+       */
+      const renderMessager = () => {
+        connectToServer();
+
+        const elIcon = document.getElementsByClassName("icon")[0];
+        elIcon.classList.add("hide");
+
+        const elTitle = document.getElementsByClassName("title")[0];
+        elTitle.textContent = "Welcome";
+        elTitle.style.marginBottom = "50px";
+
+        const elLogin = document.getElementsByClassName("login")[0];
+        elLogin.classList.add("messager");
+
+        const elUserC = document.getElementsByClassName(
+          "username-container"
+        )[0];
+        elUserC.classList.add("hide");
+
+        const elMsgC = document.getElementsByClassName("message-container")[0];
+        elMsgC.classList.add("show");
+
+        const elMsg = document.getElementsByClassName("message")[0];
+        elMsg.style.width = "600px";
+
+        const elPwdC = document.getElementsByClassName("password-container")[0];
+        elPwdC.classList.add("hide");
+
+        const elBtnLogin = document.getElementById("btnLogin");
+        const elBtnLogout = document.getElementById("btnLogout");
+        elBtnLogin.setAttribute("value", "Send");
+        elBtnLogin.setAttribute("onclick", "sendMessage()");
+        elBtnLogin.classList.add("zero-margin");
+        elBtnLogout.classList.add("zero-margin");
+      };
+
+      /**
+       * Starts here
+       */
+
+      isLocalStorageAvailable();
+
+      // Register the "enter" key
+      const elUser = document.getElementsByClassName("username")[0];
+      const elPwd = document.getElementsByClassName("password")[0];
+      const elMsg = document.getElementsByClassName("message")[0];
+      const elBtn = document.getElementsByClassName("btn")[0];
+
+      registerMessageListener(elUser, elBtn);
+      registerMessageListener(elPwd, elBtn);
+      registerMessageListener(elMsg, elBtn);
+
+      // Conditional rendering
+      if (
+        localStorage.getItem("token") &&
+        localStorage.getItem("token").length > 3
+      ) {
+        renderMessager();
+
+        // Make logout btn visible
+        document.getElementById("btnLogout").classList.remove("hide");
+      }
+    </script>
+  </body>
+</html>

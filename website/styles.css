@@ -1,0 +1,310 @@
+/*
+Copyright © 2020 Fernando Silva <audacius@pm.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+In a real scenario, a Design System would be in place, with the CSS inline
+with the component - assuming a modern framework such as ReactJS (Storybook)
+or VueJS, otherwise SASS/BEM could be used plus processors to deal with
+browsers exceptions, and etc.
+*/
+
+/* CSS reset */
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Styling starts here */
+
+html {
+    font-family: 'Commissioner', sans-serif;
+}
+
+::placeholder {
+    color: white;
+    opacity: 1;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.container {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   text-align: center;
+   align-items: center;
+   margin-top: 10%;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    width: 350px;
+
+    background-color: #485461;
+    background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
+    background: -webkit-linear-gradient(315deg, #485461 0%, #28313b 74%);
+    background: -o-linear-gradient(315deg, #485461 0%, #28313b 74%);
+    background: -moz-linear-gradient(315deg, #485461 0%, #28313b 74%);
+    background: linear-gradient(315deg, #485461 0%, #28313b 74%);
+}
+
+.login .icon {
+    margin-top: 50px;
+    width: 100px;
+}
+
+.login .title {
+    margin-top: 40px;
+    color: white;
+    text-transform: uppercase;
+    font-size: 35px;
+    font-weight: 600;
+}
+
+.field {
+    position: relative;
+    margin-top: 40px;
+}
+
+.field:nth-of-type(2) {
+    margin-top: 20px;
+}
+
+.field:focus {
+    padding-bottom: 0;
+}
+
+.field input {
+    color: white;
+    background: 0;
+    border: 0;
+    padding: 0;
+    outline: none;
+    width: 250px;
+    font-size: 20px;
+    -webkit-transition: padding 0.3s 0.2s ease;
+    -moz-transition: padding 0.3s 0.2s ease;
+    -o-transition: padding 0.3s 0.2s ease;
+    transition: padding 0.3s 0.2s ease;
+    text-align: center;
+}
+
+.field .line {
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: -8px;
+    background:white;
+}
+
+.field .line:after {
+    content: " ";
+}
+
+.login .btn {
+    border: 0;
+    color: black;
+    background: white;
+    margin: 0;
+    width: 150px;
+    height: 50px;
+    /* margin-top: 40px; */
+    /* margin-bottom: 100px; */
+    border-radius: 50px;
+
+    font-family: 'Commissioner', sans-serif;
+    text-transform: capitalize;
+    font-size: 20px;
+}
+
+.btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    margin-top: 70px;
+    margin-bottom: 50px;
+    width: 400px;
+}
+
+.echo {
+    color: white;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.messager {
+    width: 800px;
+
+    -webkit-transition:width 500ms ease-in-out;
+    -moz-transition:width 500ms ease-in-out;
+    -o-transition:width 500ms ease-in-out;
+    transition:width 500ms ease-in-out;
+}
+
+.messager .message-container {
+    margin-top: 50px;
+}
+
+/* Utilities */
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: inline-block;
+}
+
+.zero-margin {
+    margin: 0 !important;
+}
